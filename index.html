@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1565c0">
+<title>工地考勤系统</title>
+<style>
+  :root{
+    --blue:#1565c0; --blue-d:#0d47a1;
+    --green:#2e7d32; --green-l:#e8f5e9;
+    --red:#c62828;  --red-l:#ffebee;
+    --gray:#607d8b; --line:#e0e0e0; --bg:#f4f6f8; --text:#212121;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg); color:var(--text); font-size:17px; line-height:1.5;
+  }
+  .hidden{display:none !important;}
+
+  /* 顶栏 */
+  header{
+    position:sticky; top:0; z-index:10;
+    background:var(--blue); color:#fff;
+    padding:14px 16px; display:flex; align-items:center; justify-content:space-between;
+    box-shadow:0 2px 6px rgba(0,0,0,.15);
+  }
+  header .title{font-size:19px; font-weight:700; display:flex; flex-direction:column;}
+  header .title small{font-size:13px; font-weight:400; opacity:.9;}
+  header button{
+    background:rgba(255,255,255,.2); color:#fff; border:none;
+    padding:8px 14px; border-radius:8px; font-size:15px;
+  }
+
+  .wrap{max-width:640px; margin:0 auto; padding:16px;}
+
+  /* 卡片 */
+  .card{background:#fff; border-radius:12px; padding:18px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .card h2{margin:0 0 14px; font-size:18px;}
+
+  label{display:block; font-size:15px; color:#555; margin:12px 0 6px;}
+  input,select{
+    width:100%; padding:14px; font-size:17px; border:1.5px solid var(--line);
+    border-radius:10px; background:#fff; color:var(--text);
+  }
+  input:focus,select:focus{outline:none; border-color:var(--blue);}
+
+  /* 大按钮 */
+  .btn{
+    display:block; width:100%; border:none; border-radius:12px;
+    padding:18px; font-size:19px; font-weight:700; color:#fff;
+    background:var(--blue); margin-top:14px; cursor:pointer;
+  }
+  .btn:active{background:var(--blue-d);}
+  .btn.secondary{background:var(--gray);}
+  .btn.green{background:var(--green);}
+  .btn:disabled{opacity:.55;}
+  .btn-sm{padding:10px 14px; font-size:15px; width:auto; display:inline-block; margin:0;}
+
+  .link{color:var(--blue); text-align:center; margin-top:16px; font-size:16px; cursor:pointer;}
+
+  .msg{padding:12px 14px; border-radius:10px; margin:12px 0; font-size:15px;}
+  .msg.err{background:var(--red-l); color:var(--red);}
+  .msg.ok{background:var(--green-l); color:var(--green);}
+  .muted{color:#777; font-size:15px;}
+
+  /* 员工打卡行 */
+  .emp{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 4px; border-bottom:1px solid var(--line); gap:10px;
+  }
+  .emp:last-child{border-bottom:none;}
+  .emp .name{font-size:18px; font-weight:600; flex:1; min-width:0;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .toggle{display:flex; gap:8px;}
+  .toggle button{
+    border:2px solid var(--line); background:#fff; color:#999;
+    border-radius:10px; padding:12px 16px; font-size:16px; font-weight:700; min-width:64px;
+  }
+  .toggle button.on-present{border-color:var(--green); background:var(--green); color:#fff;}
+  .toggle button.on-absent {border-color:var(--red);   background:var(--red);   color:#fff;}
+
+  /* 标签页 */
+  .tabs{display:flex; gap:6px; margin-bottom:16px; overflow-x:auto; -webkit-overflow-scrolling:touch;}
+  .tabs button{
+    flex:0 0 auto; border:none; background:#fff; color:#555;
+    padding:12px 16px; border-radius:10px; font-size:16px; font-weight:600; box-shadow:0 1px 2px rgba(0,0,0,.06);
+  }
+  .tabs button.active{background:var(--blue); color:#fff;}
+
+  /* 表格 */
+  .tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+  table{width:100%; border-collapse:collapse; font-size:15px; min-width:320px;}
+  th,td{padding:11px 10px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap;}
+  th{background:#f0f3f6; font-weight:700; position:sticky; top:0;}
+  td.num,th.num{text-align:center; font-variant-numeric:tabular-nums;}
+
+  .row-actions{display:flex; gap:8px; flex-wrap:wrap;}
+  .item{display:flex; align-items:center; justify-content:space-between; padding:12px 4px; border-bottom:1px solid var(--line); gap:8px;}
+  .item:last-child{border-bottom:none;}
+  .item .info{flex:1; min-width:0;}
+  .item .info b{font-size:17px;}
+  .item .info small{color:#777; display:block;}
+  .badge{font-size:12px; padding:3px 8px; border-radius:20px; background:#eceff1; color:#555;}
+  .badge.off{background:var(--red-l); color:var(--red);}
+
+  .center{text-align:center;}
+  .spacer{height:8px;}
+  #loading{position:fixed; inset:0; background:rgba(255,255,255,.7); display:flex; align-items:center; justify-content:center; z-index:100; font-size:18px; color:var(--blue);}
+</style>
+</head>
+<body>
+
+<!-- ===== 登录页 ===== -->
+<div id="auth" class="wrap">
+  <div class="card" style="margin-top:40px;">
+    <h2 class="center" id="authTitle">工地考勤系统 · 登录</h2>
+    <div id="authMsg"></div>
+    <label>邮箱</label>
+    <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com">
+    <label>密码</label>
+    <input id="password" type="password" autocomplete="current-password" placeholder="至少 6 位">
+    <button class="btn" id="authBtn">登录</button>
+    <div class="link" id="authSwitch">还没有账号?点这里注册</div>
+  </div>
+  <p class="muted center">负责人请自行注册,注册后联系人事部分配工地。</p>
+</div>
+
+<!-- ===== 主界面 ===== -->
+<div id="app" class="hidden">
+  <header>
+    <div class="title">
+      <span id="hdrTitle">考勤</span>
+      <small id="hdrSub"></small>
+    </div>
+    <button id="logoutBtn">退出</button>
+  </header>
+
+  <!-- 负责人视图 -->
+  <div id="managerView" class="wrap hidden">
+    <div class="card">
+      <h2>每日考勤</h2>
+      <div id="mgrNoSite" class="msg err hidden">你还没有被分配工地,请联系人事部。</div>
+      <div id="mgrBody" class="hidden">
+        <label>选择日期</label>
+        <input id="attDate" type="date">
+        <div class="spacer"></div>
+        <div id="empList"></div>
+        <div id="attMsg"></div>
+        <button class="btn green" id="submitAtt">提交考勤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 人事部视图 -->
+  <div id="hrView" class="wrap hidden">
+    <div class="tabs">
+      <button data-tab="summary" class="active">月度汇总</button>
+      <button data-tab="employees">员工管理</button>
+      <button data-tab="sites">工地与账号</button>
+    </div>
+
+    <!-- 月度汇总 -->
+    <div id="tab-summary" class="tab">
+      <div class="card">
+        <h2>月度出勤汇总</h2>
+        <label>选择月份</label>
+        <input id="sumMonth" type="month">
+        <div class="row-actions" style="margin-top:14px;">
+          <button class="btn green btn-sm" id="loadSummary">查询</button>
+          <button class="btn secondary btn-sm" id="exportCsv">导出 CSV</button>
+        </div>
+        <div id="sumMsg"></div>
+        <div class="tbl-wrap" style="margin-top:12px;">
+          <table id="sumTable"><thead><tr><th>员工</th><th>工地</th><th class="num">出勤天数</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 员工管理 -->
+    <div id="tab-employees" class="tab hidden">
+      <div class="card">
+        <h2>新增员工</h2>
+        <label>员工姓名</label>
+        <input id="empName" type="text" placeholder="张三">
+        <label>分配工地</label>
+        <select id="empSite"></select>
+        <button class="btn" id="addEmp">添加员工</button>
+        <div id="empMsg"></div>
+      </div>
+      <div class="card">
+        <h2>员工名单</h2>
+        <div id="empManageList"><p class="muted">加载中…</p></div>
+      </div>
+    </div>
+
+    <!-- 工地与账号 -->
+    <div id="tab-sites" class="tab hidden">
+      <div class="card">
+        <h2>新增工地</h2>
+        <label>工地名称</label>
+        <input id="siteName" type="text" placeholder="XX 路项目部">
+        <button class="btn" id="addSite">添加工地</button>
+        <div id="siteMsg"></div>
+      </div>
+      <div class="card">
+        <h2>工地列表</h2>
+        <div id="siteList"><p class="muted">加载中…</p></div>
+      </div>
+      <div class="card">
+        <h2>负责人账号 · 分配工地</h2>
+        <p class="muted">负责人在 App 注册后会出现在这里,给他选择所属工地即可。</p>
+        <div id="mgrAccountList"><p class="muted">加载中…</p></div>
+        <div id="acctMsg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="loading" class="hidden">处理中…</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ============================================================
+// 配置:换成你自己的项目信息即可。publishable key 是公开安全的。
+// ============================================================
+const SUPABASE_URL = "https://yuyhncjdubgichaplvyz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ATubQJGGED2dqKP9kjqJyA_9VpwTM0f";
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ---------- 小工具 ----------
+const $ = (id) => document.getElementById(id);
+const show = (el) => el.classList.remove("hidden");
+const hide = (el) => el.classList.add("hidden");
+const loading = (on) => $("loading").classList.toggle("hidden", !on);
+function msg(el, text, ok){ el.innerHTML = text ? `<div class="msg ${ok?'ok':'err'}">${text}</div>` : ""; }
+function todayStr(){ const d=new Date(); const p=n=>String(n).padStart(2,"0"); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; }
+function monthStr(){ const d=new Date(); const p=n=>String(n).padStart(2,"0"); return `${d.getFullYear()}-${p(d.getMonth()+1)}`; }
+function esc(s){ return String(s??"").replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+// 全局状态
+let me = null;       // profiles 行
+let siteCache = [];  // 工地列表(人事部用)
+
+// ============================================================
+// 认证
+// ============================================================
+let signupMode = false;
+
+$("authSwitch").onclick = () => {
+  signupMode = !signupMode;
+  $("authTitle").textContent = signupMode ? "工地考勤系统 · 注册" : "工地考勤系统 · 登录";
+  $("authBtn").textContent   = signupMode ? "注册" : "登录";
+  $("authSwitch").textContent = signupMode ? "已有账号?点这里登录" : "还没有账号?点这里注册";
+  $("password").setAttribute("autocomplete", signupMode ? "new-password" : "current-password");
+  msg($("authMsg"), "");
+};
+
+$("authBtn").onclick = async () => {
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  if(!email || !password){ msg($("authMsg"), "请输入邮箱和密码"); return; }
+  loading(true);
+  try{
+    if(signupMode){
+      const { error } = await sb.auth.signUp({ email, password });
+      if(error) throw error;
+      const { data:s } = await sb.auth.getSession();
+      if(!s.session){
+        msg($("authMsg"), "注册成功!请用刚才的邮箱密码登录。", true);
+        signupMode = false; $("authSwitch").onclick();
+        loading(false); return;
+      }
+    } else {
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if(error) throw error;
+    }
+    await afterLogin();
+  }catch(e){
+    msg($("authMsg"), translateErr(e.message));
+  }finally{ loading(false); }
+};
+
+$("logoutBtn").onclick = async () => { await sb.auth.signOut(); location.reload(); };
+
+function translateErr(m){
+  if(/Invalid login credentials/i.test(m)) return "邮箱或密码错误";
+  if(/already registered/i.test(m)) return "该邮箱已注册,请直接登录";
+  if(/at least 6/i.test(m) || /Password should/i.test(m)) return "密码至少 6 位";
+  if(/Email not confirmed/i.test(m)) return "邮箱未验证。请在 Supabase 关闭邮箱验证,或到邮箱点击确认链接。";
+  return m;
+}
+
+// ============================================================
+// 登录后路由
+// ============================================================
+async function afterLogin(){
+  loading(true);
+  try{
+    const { data:{ user } } = await sb.auth.getUser();
+    if(!user){ return; }
+    // 读取自己的资料(触发器已自动创建)
+    let { data:prof } = await sb.from("profiles").select("*").eq("id", user.id).maybeSingle();
+    if(!prof){
+      // 极少数情况下触发器延迟,稍等重试一次
+      await new Promise(r=>setTimeout(r,800));
+      ({ data:prof } = await sb.from("profiles").select("*").eq("id", user.id).maybeSingle());
+    }
+    me = prof || { id:user.id, email:user.email, role:"manager", site_id:null };
+
+    hide($("auth")); show($("app"));
+    if(me.role === "hr"){ initHR(); }
+    else { initManager(); }
+  }finally{ loading(false); }
+}
+
+// ============================================================
+// 负责人视图
+// ============================================================
+let mgrEmployees = [];
+let attState = {}; // employee_id -> 'present'|'absent'|undefined
+
+async function initManager(){
+  show($("managerView")); hide($("hrView"));
+  $("hdrTitle").textContent = "每日考勤";
+
+  if(!me.site_id){
+    show($("mgrNoSite")); hide($("mgrBody"));
+    $("hdrSub").textContent = "未分配工地";
+    return;
+  }
+  // 取工地名
+  const { data:site } = await sb.from("sites").select("name").eq("id", me.site_id).maybeSingle();
+  $("hdrSub").textContent = site ? site.name : "";
+
+  show($("mgrBody")); hide($("mgrNoSite"));
+  $("attDate").value = todayStr();
+  $("attDate").max = todayStr(); // 不允许选未来
+  $("attDate").onchange = loadAttendance;
+  $("submitAtt").onclick = submitAttendance;
+
+  // 员工名单(本工地 active)
+  const { data:emps, error } = await sb.from("employees")
+    .select("id,name").eq("site_id", me.site_id).eq("active", true).order("name");
+  if(error){ msg($("attMsg"), "加载员工失败:"+error.message); return; }
+  mgrEmployees = emps || [];
+  await loadAttendance();
+}
+
+async function loadAttendance(){
+  msg($("attMsg"), "");
+  const date = $("attDate").value;
+  if(mgrEmployees.length === 0){ $("empList").innerHTML = '<p class="muted">本工地暂无员工,请联系人事部添加。</p>'; return; }
+  loading(true);
+  attState = {};
+  try{
+    const ids = mgrEmployees.map(e=>e.id);
+    const { data:rec } = await sb.from("attendance")
+      .select("employee_id,status").eq("date", date).in("employee_id", ids);
+    (rec||[]).forEach(r => attState[r.employee_id] = r.status);
+    renderEmpList();
+  }finally{ loading(false); }
+}
+
+function renderEmpList(){
+  $("empList").innerHTML = mgrEmployees.map(e=>{
+    const st = attState[e.id];
+    return `<div class="emp">
+      <span class="name">${esc(e.name)}</span>
+      <span class="toggle">
+        <button class="${st==='present'?'on-present':''}" onclick="setAtt('${e.id}','present')">出勤</button>
+        <button class="${st==='absent'?'on-absent':''}"  onclick="setAtt('${e.id}','absent')">缺勤</button>
+      </span>
+    </div>`;
+  }).join("");
+}
+
+window.setAtt = (id, status) => {
+  attState[id] = (attState[id] === status) ? undefined : status; // 再点一次取消
+  renderEmpList();
+};
+
+async function submitAttendance(){
+  const date = $("attDate").value;
+  const rows = mgrEmployees
+    .filter(e => attState[e.id] === "present" || attState[e.id] === "absent")
+    .map(e => ({ employee_id:e.id, site_id:me.site_id, date, status:attState[e.id], marked_by:me.id, updated_at:new Date().toISOString() }));
+  if(rows.length === 0){ msg($("attMsg"), "请先给至少一位员工打勾"); return; }
+  loading(true);
+  try{
+    const { error } = await sb.from("attendance").upsert(rows, { onConflict:"employee_id,date" });
+    if(error) throw error;
+    msg($("attMsg"), `已提交 ${rows.length} 人的考勤(${date}),当天可随时修改。`, true);
+  }catch(e){
+    msg($("attMsg"), "提交失败:"+e.message);
+  }finally{ loading(false); }
+}
+
+// ============================================================
+// 人事部视图
+// ============================================================
+function initHR(){
+  hide($("managerView")); show($("hrView"));
+  $("hdrTitle").textContent = "人事部";
+  $("hdrSub").textContent = me.email || "";
+
+  // 标签切换
+  document.querySelectorAll(".tabs button").forEach(b=>{
+    b.onclick = () => {
+      document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      document.querySelectorAll(".tab").forEach(t=>hide(t));
+      show($("tab-"+b.dataset.tab));
+    };
+  });
+
+  $("sumMonth").value = monthStr();
+  $("loadSummary").onclick = loadSummary;
+  $("exportCsv").onclick = exportCsv;
+  $("addEmp").onclick = addEmployee;
+  $("addSite").onclick = addSite;
+
+  loadSites().then(()=>{ loadSummary(); loadEmployeesManage(); loadManagerAccounts(); });
+}
+
+// ---- 工地 ----
+async function loadSites(){
+  const { data } = await sb.from("sites").select("id,name").order("name");
+  siteCache = data || [];
+  // 填充员工新增里的工地下拉
+  $("empSite").innerHTML = siteCache.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("")
+    || '<option value="">(请先添加工地)</option>';
+  // 工地列表
+  $("siteList").innerHTML = siteCache.length ? siteCache.map(s=>`
+    <div class="item"><div class="info"><b>${esc(s.name)}</b></div>
+      <button class="btn secondary btn-sm" onclick="delSite('${s.id}','${esc(s.name)}')">删除</button></div>`).join("")
+    : '<p class="muted">还没有工地,请在上面添加。</p>';
+}
+
+async function addSite(){
+  const name = $("siteName").value.trim();
+  if(!name){ msg($("siteMsg"),"请输入工地名称"); return; }
+  loading(true);
+  try{
+    const { error } = await sb.from("sites").insert({ name });
+    if(error) throw error;
+    $("siteName").value=""; msg($("siteMsg"),"已添加",true);
+    await loadSites(); await loadManagerAccounts();
+  }catch(e){ msg($("siteMsg"),"添加失败:"+e.message); }
+  finally{ loading(false); }
+}
+
+window.delSite = async (id, name) => {
+  if(!confirm(`确定删除工地「${name}」?该工地的员工和考勤记录也会一并删除。`)) return;
+  loading(true);
+  try{
+    const { error } = await sb.from("sites").delete().eq("id", id);
+    if(error) throw error;
+    await loadSites(); await loadEmployeesManage(); await loadManagerAccounts();
+  }catch(e){ alert("删除失败:"+e.message); }
+  finally{ loading(false); }
+};
+
+// ---- 员工 ----
+async function addEmployee(){
+  const name = $("empName").value.trim();
+  const site_id = $("empSite").value;
+  if(!name){ msg($("empMsg"),"请输入员工姓名"); return; }
+  if(!site_id){ msg($("empMsg"),"请先在「工地与账号」里添加工地"); return; }
+  loading(true);
+  try{
+    const { error } = await sb.from("employees").insert({ name, site_id });
+    if(error) throw error;
+    $("empName").value=""; msg($("empMsg"),"已添加",true);
+    await loadEmployeesManage();
+  }catch(e){ msg($("empMsg"),"添加失败:"+e.message); }
+  finally{ loading(false); }
+}
+
+async function loadEmployeesManage(){
+  const { data } = await sb.from("employees").select("id,name,active,site_id").order("name");
+  const siteName = id => (siteCache.find(s=>s.id===id)||{}).name || "未分配";
+  $("empManageList").innerHTML = (data && data.length) ? data.map(e=>`
+    <div class="item">
+      <div class="info">
+        <b>${esc(e.name)}</b>
+        <small>${esc(siteName(e.site_id))} ${e.active?'':'<span class="badge off">已停用</span>'}</small>
+      </div>
+      <div class="row-actions">
+        <button class="btn secondary btn-sm" onclick="toggleEmp('${e.id}',${e.active})">${e.active?'停用':'启用'}</button>
+        <button class="btn secondary btn-sm" onclick="delEmp('${e.id}','${esc(e.name)}')">删除</button>
+      </div>
+    </div>`).join("") : '<p class="muted">还没有员工。</p>';
+}
+
+window.toggleEmp = async (id, cur) => {
+  loading(true);
+  try{ await sb.from("employees").update({ active: !cur }).eq("id", id); await loadEmployeesManage(); }
+  finally{ loading(false); }
+};
+
+window.delEmp = async (id, name) => {
+  if(!confirm(`确定删除员工「${name}」?其考勤记录也会一并删除。`)) return;
+  loading(true);
+  try{ await sb.from("employees").delete().eq("id", id); await loadEmployeesManage(); }
+  catch(e){ alert("删除失败:"+e.message); }
+  finally{ loading(false); }
+};
+
+// ---- 负责人账号分配工地 ----
+async function loadManagerAccounts(){
+  const { data } = await sb.from("profiles").select("id,email,role,site_id").eq("role","manager").order("email");
+  if(!data || data.length===0){ $("mgrAccountList").innerHTML = '<p class="muted">还没有负责人注册。让负责人在 App 里注册后刷新此页。</p>'; return; }
+  const opts = (sel) => '<option value="">未分配</option>' +
+    siteCache.map(s=>`<option value="${s.id}" ${s.id===sel?'selected':''}>${esc(s.name)}</option>`).join("");
+  $("mgrAccountList").innerHTML = data.map(p=>`
+    <div class="item">
+      <div class="info"><b>${esc(p.email||'(无邮箱)')}</b></div>
+      <select style="width:auto; min-width:140px;" onchange="assignSite('${p.id}', this.value)">${opts(p.site_id)}</select>
+    </div>`).join("");
+}
+
+window.assignSite = async (profileId, siteId) => {
+  loading(true);
+  try{
+    const { error } = await sb.from("profiles").update({ site_id: siteId || null }).eq("id", profileId);
+    if(error) throw error;
+    msg($("acctMsg"), "已保存分配", true);
+  }catch(e){ msg($("acctMsg"), "保存失败:"+e.message); }
+  finally{ loading(false); }
+};
+
+// ---- 月度汇总 ----
+let lastSummary = [];
+
+async function loadSummary(){
+  const m = $("sumMonth").value; // YYYY-MM
+  if(!m){ msg($("sumMsg"),"请选择月份"); return; }
+  const [y, mo] = m.split("-").map(Number);
+  const start = `${m}-01`;
+  const endD = new Date(y, mo, 0).getDate();
+  const end = `${m}-${String(endD).padStart(2,"0")}`;
+  loading(true);
+  msg($("sumMsg"),"");
+  try{
+    // 员工 + 工地映射
+    const { data:emps } = await sb.from("employees").select("id,name,site_id");
+    const empMap = {}; (emps||[]).forEach(e=>empMap[e.id]=e);
+    const siteName = id => (siteCache.find(s=>s.id===id)||{}).name || "未分配";
+
+    // 当月所有 present 记录
+    const { data:rec, error } = await sb.from("attendance")
+      .select("employee_id").eq("status","present").gte("date", start).lte("date", end);
+    if(error) throw error;
+    const cnt = {}; (rec||[]).forEach(r=>cnt[r.employee_id]=(cnt[r.employee_id]||0)+1);
+
+    // 按员工汇总(所有员工都列出,包含 0 天)
+    lastSummary = (emps||[]).map(e=>({
+      name:e.name, site:siteName(e.site_id), days:cnt[e.id]||0
+    })).sort((a,b)=> a.site.localeCompare(b.site,'zh') || b.days-a.days || a.name.localeCompare(b.name,'zh'));
+
+    const tb = $("sumTable").querySelector("tbody");
+    tb.innerHTML = lastSummary.length ? lastSummary.map(r=>`
+      <tr><td>${esc(r.name)}</td><td>${esc(r.site)}</td><td class="num">${r.days}</td></tr>`).join("")
+      : '<tr><td colspan="3" class="muted center">暂无数据</td></tr>';
+    if(lastSummary.length===0) msg($("sumMsg"),"该月还没有考勤数据");
+  }catch(e){ msg($("sumMsg"),"查询失败:"+e.message); }
+  finally{ loading(false); }
+}
+
+function exportCsv(){
+  if(!lastSummary || lastSummary.length===0){ msg($("sumMsg"),"没有可导出的数据,请先查询"); return; }
+  const m = $("sumMonth").value;
+  const header = ["员工","工地","出勤天数"];
+  const lines = [header.join(",")].concat(
+    lastSummary.map(r => [csvCell(r.name), csvCell(r.site), r.days].join(","))
+  );
+  const bom = "﻿"; // 让 Excel 正确识别 UTF-8 中文
+  const blob = new Blob([bom + lines.join("\r\n")], { type:"text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `考勤汇总_${m}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+function csvCell(s){ s = String(s??""); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
+
+// ============================================================
+// 启动:检查是否已登录
+// ============================================================
+(async function(){
+  const { data:{ session } } = await sb.auth.getSession();
+  if(session){ await afterLogin(); }
+})();
+</script>
+</body>
+</html>
