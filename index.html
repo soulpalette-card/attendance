@@ -9,6 +9,7 @@
   :root{
     --blue:#1565c0; --blue-d:#0d47a1;
     --green:#2e7d32; --green-l:#e8f5e9;
+    --orange:#e65100;
     --red:#c62828;  --red-l:#ffebee;
     --gray:#607d8b; --line:#e0e0e0; --bg:#f4f6f8; --text:#212121;
   }
@@ -19,9 +20,8 @@
     background:var(--bg); color:var(--text); font-size:17px; line-height:1.5;
   }
   .hidden{display:none !important;}
-  .en{opacity:.75; font-weight:400;}          /* 英文次要色 */
+  .en{opacity:.75; font-weight:400;}
 
-  /* 顶栏 */
   header{
     position:sticky; top:0; z-index:10;
     background:var(--blue); color:#fff;
@@ -30,30 +30,19 @@
   }
   header .title{font-size:18px; font-weight:700; display:flex; flex-direction:column;}
   header .title small{font-size:12px; font-weight:400; opacity:.9;}
-  header button{
-    background:rgba(255,255,255,.2); color:#fff; border:none;
-    padding:8px 14px; border-radius:8px; font-size:14px; line-height:1.2;
-  }
+  header button{background:rgba(255,255,255,.2); color:#fff; border:none; padding:8px 14px; border-radius:8px; font-size:14px; line-height:1.2;}
 
   .wrap{max-width:640px; margin:0 auto; padding:16px;}
-
-  /* 卡片 */
   .card{background:#fff; border-radius:12px; padding:18px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,.08);}
   .card h2{margin:0 0 14px; font-size:18px;}
 
   label{display:block; font-size:15px; color:#555; margin:12px 0 6px;}
-  input,select{
-    width:100%; padding:14px; font-size:17px; border:1.5px solid var(--line);
-    border-radius:10px; background:#fff; color:var(--text);
-  }
+  input,select{width:100%; padding:14px; font-size:17px; border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--text);}
   input:focus,select:focus{outline:none; border-color:var(--blue);}
+  .checkline{display:flex; align-items:center; gap:10px; margin:14px 0 4px; font-size:16px; color:var(--text);}
+  .checkline input{width:24px; height:24px;}
 
-  /* 大按钮 */
-  .btn{
-    display:block; width:100%; border:none; border-radius:12px;
-    padding:18px; font-size:18px; font-weight:700; color:#fff;
-    background:var(--blue); margin-top:14px; cursor:pointer; line-height:1.25;
-  }
+  .btn{display:block; width:100%; border:none; border-radius:12px; padding:18px; font-size:18px; font-weight:700; color:#fff; background:var(--blue); margin-top:14px; cursor:pointer; line-height:1.25;}
   .btn:active{background:var(--blue-d);}
   .btn.secondary{background:var(--gray);}
   .btn.green{background:var(--green);}
@@ -61,41 +50,30 @@
   .btn-sm{padding:10px 14px; font-size:14px; width:auto; display:inline-block; margin:0;}
 
   .link{color:var(--blue); text-align:center; margin-top:16px; font-size:15px; cursor:pointer;}
-
   .msg{padding:12px 14px; border-radius:10px; margin:12px 0; font-size:15px;}
   .msg.err{background:var(--red-l); color:var(--red);}
   .msg.ok{background:var(--green-l); color:var(--green);}
   .muted{color:#777; font-size:15px;}
 
-  /* 员工打卡行 */
-  .emp{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 4px; border-bottom:1px solid var(--line); gap:10px;
-  }
-  .emp:last-child{border-bottom:none;}
-  .emp .name{font-size:18px; font-weight:600; flex:1; min-width:0;
-    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .toggle{display:flex; gap:8px;}
-  .toggle button{
-    border:2px solid var(--line); background:#fff; color:#999;
-    border-radius:10px; padding:8px 12px; font-size:15px; font-weight:700; min-width:70px; line-height:1.15;
-  }
-  .toggle button small{display:block; font-size:11px; font-weight:400;}
-  .toggle button.on-present{border-color:var(--green); background:var(--green); color:#fff;}
-  .toggle button.on-absent {border-color:var(--red);   background:var(--red);   color:#fff;}
+  /* 员工打卡块 attendance block */
+  .empb{padding:12px 2px; border-bottom:1px solid var(--line);}
+  .empb:last-child{border-bottom:none;}
+  .empb .head{font-size:18px; font-weight:600; margin-bottom:8px;}
+  .empb .head .sub{display:block; font-size:12px; color:#777; font-weight:400;}
+  .hrsel{display:flex; gap:6px;}
+  .hrsel button{flex:1; border:2px solid var(--line); background:#fff; color:#888; border-radius:10px; padding:9px 2px; font-size:14px; font-weight:700; line-height:1.15;}
+  .hrsel button small{display:block; font-size:10px; font-weight:400;}
+  .hrsel button.on-absent {border-color:var(--red);    background:var(--red);    color:#fff;}
+  .hrsel button.on-day    {border-color:var(--green);  background:var(--green);  color:#fff;}
+  .hrsel button.on-ot     {border-color:var(--orange); background:var(--orange); color:#fff;}
 
-  /* 标签页 */
   .tabs{display:flex; gap:6px; margin-bottom:16px; overflow-x:auto; -webkit-overflow-scrolling:touch;}
-  .tabs button{
-    flex:0 0 auto; border:none; background:#fff; color:#555;
-    padding:10px 14px; border-radius:10px; font-size:14px; font-weight:600; box-shadow:0 1px 2px rgba(0,0,0,.06); line-height:1.3;
-  }
+  .tabs button{flex:0 0 auto; border:none; background:#fff; color:#555; padding:10px 14px; border-radius:10px; font-size:14px; font-weight:600; box-shadow:0 1px 2px rgba(0,0,0,.06); line-height:1.3;}
   .tabs button.active{background:var(--blue); color:#fff;}
 
-  /* 表格 */
   .tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
-  table{width:100%; border-collapse:collapse; font-size:15px; min-width:360px;}
-  th,td{padding:11px 10px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap;}
+  table{width:100%; border-collapse:collapse; font-size:14px; min-width:360px;}
+  th,td{padding:10px 9px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap;}
   th{background:#f0f3f6; font-weight:700; position:sticky; top:0; font-size:13px;}
   td.num,th.num{text-align:center; font-variant-numeric:tabular-nums;}
 
@@ -107,6 +85,10 @@
   .item .info small{color:#777; display:block;}
   .badge{font-size:12px; padding:3px 8px; border-radius:20px; background:#eceff1; color:#555;}
   .badge.off{background:var(--red-l); color:var(--red);}
+  .badge.cidb{background:var(--green-l); color:var(--green);}
+  .sitechecks{display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:6px;}
+  .sitechecks label{display:flex; align-items:center; gap:6px; margin:0; font-size:15px; color:var(--text);}
+  .sitechecks input{width:20px; height:20px;}
 
   .center{text-align:center;}
   .spacer{height:8px;}
@@ -120,6 +102,10 @@
   <div class="card" style="margin-top:40px;">
     <h2 class="center" id="authTitle">工地考勤 Site Attendance · 登录 Login</h2>
     <div id="authMsg"></div>
+    <div id="nameRow" class="hidden">
+      <label>称呼 Name(如何称呼你)</label>
+      <input id="signupName" type="text" placeholder="例如 e.g. 陈先生 / Mr Tan">
+    </div>
     <label>邮箱 Email</label>
     <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com">
     <label>密码 Password</label>
@@ -146,6 +132,10 @@
       <h2>每日考勤 Daily Attendance</h2>
       <div id="mgrNoSite" class="msg err hidden">你还没有被分配工地,请联系人事部。<br><span class="en">No site assigned yet. Please contact HR.</span></div>
       <div id="mgrBody" class="hidden">
+        <div id="mgrSiteWrap" class="hidden">
+          <label>选择工地 Select Site</label>
+          <select id="mgrSiteSelect"></select>
+        </div>
         <label>选择日期 Select Date</label>
         <input id="attDate" type="date">
         <div class="spacer"></div>
@@ -172,12 +162,13 @@
         <input id="sumMonth" type="month">
         <div class="row-actions" style="margin-top:14px;">
           <button class="btn green btn-sm" id="loadSummary">查询 Search</button>
-          <button class="btn secondary btn-sm" id="exportCsv">导出 CSV Export</button>
+          <button class="btn secondary btn-sm" id="exportXls">导出月历 Excel Export</button>
         </div>
         <div id="sumMsg"></div>
         <div class="tbl-wrap" style="margin-top:12px;">
           <table id="sumTable"><thead><tr>
-            <th>员工<br>Name</th><th>NRIC</th><th>工种<br>Trade</th><th>工地<br>Site</th><th class="num">出勤天数<br>Days</th>
+            <th>员工<br>Name</th><th>NRIC</th><th>工种<br>Trade</th><th>CIDB</th><th>工地<br>Site</th>
+            <th class="num">出勤天数<br>Days</th><th class="num">正常时数<br>Normal</th><th class="num">OT时数<br>OT</th><th class="num">总时数<br>Total</th>
           </tr></thead><tbody></tbody></table>
         </div>
       </div>
@@ -199,6 +190,7 @@
           <option value="ksk">ksk</option>
           <option value="other">other</option>
         </select>
+        <label class="checkline"><input id="empCidb" type="checkbox"> 有 CIDB 证件 · Has CIDB card</label>
         <label>分配工地 Assign Site</label>
         <select id="empSite"></select>
         <button class="btn" id="addEmp">添加员工 Add</button>
@@ -224,8 +216,8 @@
         <div id="siteList"><p class="muted">加载中… Loading…</p></div>
       </div>
       <div class="card">
-        <h2>负责人账号 · 分配工地<br><span class="en">Managers · Assign Site</span></h2>
-        <p class="muted">负责人在 App 注册后会出现在这里,给他选择所属工地即可。<br><span class="en">Managers appear here after they register. Pick their site.</span></p>
+        <h2>负责人账号 · 分配工地<br><span class="en">Managers · Assign Sites</span></h2>
+        <p class="muted">负责人注册后出现在这里。勾选他负责的工地(可多选)。<br><span class="en">Tick the sites each manager runs (multiple allowed).</span></p>
         <div id="mgrAccountList"><p class="muted">加载中… Loading…</p></div>
         <div id="acctMsg"></div>
       </div>
@@ -238,15 +230,13 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ============================================================
-// 配置:换成你自己的项目信息即可。publishable key 是公开安全的。
-// Config: replace with your own project info. Publishable key is safe to expose.
+// 配置 Config(publishable key 公开安全 / safe to expose)
 // ============================================================
 const SUPABASE_URL = "https://yuyhncjdubgichaplvyz.supabase.co";
 const SUPABASE_KEY = "sb_publishable_ATubQJGGED2dqKP9kjqJyA_9VpwTM0f";
-
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ---------- 小工具 helpers ----------
+// ---------- helpers ----------
 const $ = (id) => document.getElementById(id);
 const show = (el) => el.classList.remove("hidden");
 const hide = (el) => el.classList.add("hidden");
@@ -256,9 +246,21 @@ function todayStr(){ const d=new Date(); const p=n=>String(n).padStart(2,"0"); r
 function monthStr(){ const d=new Date(); const p=n=>String(n).padStart(2,"0"); return `${d.getFullYear()}-${p(d.getMonth()+1)}`; }
 function esc(s){ return String(s??"").replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-// 全局状态 global state
-let me = null;       // profiles 行 row
-let siteCache = [];  // 工地列表 sites (HR)
+let me = null;
+let siteCache = [];       // HR 用:全部工地
+let mgrSites = [];        // 负责人用:我管理的工地
+let currentSite = null;   // 负责人当前选中的工地
+
+// 4 种考勤状态 → 工时映射 attendance state -> hours
+// 'absent':缺勤  '8':8h  '10':10h  '12':10h+2OT(总12h)
+const HOURS = { '8':{h:8,ot:0}, '10':{h:10,ot:0}, '12':{h:12,ot:2} };
+function stateFromRow(r){
+  if(!r || r.status==='absent') return 'absent';
+  const h = (r.hours==null) ? 8 : r.hours;       // 兼容旧数据:present 但没工时 → 8h
+  if(r.ot_hours>0 || h>=12) return '12';
+  if(h>=10) return '10';
+  return '8';
+}
 
 // ============================================================
 // 认证 Auth
@@ -271,17 +273,20 @@ $("authSwitch").onclick = () => {
   $("authBtn").textContent  = signupMode ? "注册 Register" : "登录 Login";
   $("authSwitch").textContent = signupMode ? "已有账号?点这里登录 · Have account? Login" : "还没有账号?点这里注册 · No account? Register";
   $("password").setAttribute("autocomplete", signupMode ? "new-password" : "current-password");
+  $("nameRow").classList.toggle("hidden", !signupMode);
   msg($("authMsg"), "");
 };
 
 $("authBtn").onclick = async () => {
   const email = $("email").value.trim();
   const password = $("password").value;
+  const name = $("signupName").value.trim();
   if(!email || !password){ msg($("authMsg"), "请输入邮箱和密码 · Enter email & password"); return; }
+  if(signupMode && !name){ msg($("authMsg"), "请输入称呼 · Enter your name"); return; }
   loading(true);
   try{
     if(signupMode){
-      const { error } = await sb.auth.signUp({ email, password });
+      const { error } = await sb.auth.signUp({ email, password, options:{ data:{ name } } });
       if(error) throw error;
       const { data:s } = await sb.auth.getSession();
       if(!s.session){
@@ -323,7 +328,6 @@ async function afterLogin(){
       ({ data:prof } = await sb.from("profiles").select("*").eq("id", user.id).maybeSingle());
     }
     me = prof || { id:user.id, email:user.email, role:"manager", site_id:null };
-
     hide($("auth")); show($("app"));
     if(me.role === "hr"){ initHR(); }
     else { initManager(); }
@@ -334,30 +338,54 @@ async function afterLogin(){
 // 负责人视图 Manager view
 // ============================================================
 let mgrEmployees = [];
-let attState = {}; // employee_id -> 'present'|'absent'|undefined
+let attState = {}; // employee_id -> 'absent'|'8'|'10'|'12'|undefined
 
 async function initManager(){
   show($("managerView")); hide($("hrView"));
   $("hdrTitle").textContent = "每日考勤 Daily Attendance";
 
-  if(!me.site_id){
+  // RLS 已保证只返回"我管理的工地"
+  const { data:sites } = await sb.from("sites").select("id,name").order("name");
+  mgrSites = sites || [];
+
+  if(mgrSites.length === 0){
     show($("mgrNoSite")); hide($("mgrBody"));
     $("hdrSub").textContent = "未分配工地 · No site";
     return;
   }
-  const { data:site } = await sb.from("sites").select("name").eq("id", me.site_id).maybeSingle();
-  $("hdrSub").textContent = site ? site.name : "";
-
   show($("mgrBody")); hide($("mgrNoSite"));
+
+  // 多工地 → 显示切换下拉
+  if(mgrSites.length > 1){
+    show($("mgrSiteWrap"));
+    $("mgrSiteSelect").innerHTML = mgrSites.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("");
+    $("mgrSiteSelect").onchange = () => { currentSite = $("mgrSiteSelect").value; updateMgrSub(); loadRoster(); };
+  } else {
+    hide($("mgrSiteWrap"));
+  }
+  currentSite = mgrSites[0].id;
+  updateMgrSub();
+
   $("attDate").value = todayStr();
   $("attDate").max = todayStr();
   $("attDate").onchange = loadAttendance;
   $("submitAtt").onclick = submitAttendance;
+  await loadRoster();
+}
 
-  const { data:emps, error } = await sb.from("employees")
-    .select("id,name,trade").eq("site_id", me.site_id).eq("active", true).order("name");
-  if(error){ msg($("attMsg"), "加载员工失败 · Failed to load: "+error.message); return; }
-  mgrEmployees = emps || [];
+function updateMgrSub(){
+  const s = mgrSites.find(x=>x.id===currentSite);
+  $("hdrSub").textContent = s ? s.name : "";
+}
+
+async function loadRoster(){
+  loading(true);
+  try{
+    const { data:emps, error } = await sb.from("employees")
+      .select("id,name,nric,trade").eq("site_id", currentSite).eq("active", true).order("name");
+    if(error){ msg($("attMsg"), "加载员工失败 · Failed to load: "+error.message); mgrEmployees=[]; }
+    else mgrEmployees = emps || [];
+  }finally{ loading(false); }
   await loadAttendance();
 }
 
@@ -370,8 +398,8 @@ async function loadAttendance(){
   try{
     const ids = mgrEmployees.map(e=>e.id);
     const { data:rec } = await sb.from("attendance")
-      .select("employee_id,status").eq("date", date).in("employee_id", ids);
-    (rec||[]).forEach(r => attState[r.employee_id] = r.status);
+      .select("employee_id,status,hours,ot_hours").eq("date", date).in("employee_id", ids);
+    (rec||[]).forEach(r => attState[r.employee_id] = stateFromRow(r));
     renderEmpList();
   }finally{ loading(false); }
 }
@@ -379,33 +407,43 @@ async function loadAttendance(){
 function renderEmpList(){
   $("empList").innerHTML = mgrEmployees.map(e=>{
     const st = attState[e.id];
-    const sub = e.trade ? `<div class="en" style="font-size:12px;">${esc(e.trade)}</div>` : "";
-    return `<div class="emp">
-      <span class="name">${esc(e.name)}${sub}</span>
-      <span class="toggle">
-        <button class="${st==='present'?'on-present':''}" onclick="setAtt('${e.id}','present')">出勤<small>Present</small></button>
-        <button class="${st==='absent'?'on-absent':''}"  onclick="setAtt('${e.id}','absent')">缺勤<small>Absent</small></button>
-      </span>
+    const sub = [e.nric, e.trade].filter(Boolean).map(esc).join(" · ");
+    const cls = k => st===k ? (k==='absent'?'on-absent':(k==='12'?'on-ot':'on-day')) : '';
+    return `<div class="empb">
+      <div class="head">${esc(e.name)}${sub?`<span class="sub">${sub}</span>`:''}</div>
+      <div class="hrsel">
+        <button class="${cls('absent')}" onclick="setAtt('${e.id}','absent')">缺勤<small>Absent</small></button>
+        <button class="${cls('8')}"  onclick="setAtt('${e.id}','8')">8h<small>8小时</small></button>
+        <button class="${cls('10')}" onclick="setAtt('${e.id}','10')">10h<small>10小时</small></button>
+        <button class="${cls('12')}" onclick="setAtt('${e.id}','12')">+OT<small>10h+2OT</small></button>
+      </div>
     </div>`;
   }).join("");
 }
 
-window.setAtt = (id, status) => {
-  attState[id] = (attState[id] === status) ? undefined : status;
+window.setAtt = (id, state) => {
+  attState[id] = (attState[id] === state) ? undefined : state; // 再点一次取消
   renderEmpList();
 };
 
 async function submitAttendance(){
   const date = $("attDate").value;
   const rows = mgrEmployees
-    .filter(e => attState[e.id] === "present" || attState[e.id] === "absent")
-    .map(e => ({ employee_id:e.id, site_id:me.site_id, date, status:attState[e.id], marked_by:me.id, updated_at:new Date().toISOString() }));
-  if(rows.length === 0){ msg($("attMsg"), "请先给至少一位员工打勾 · Please mark at least one"); return; }
+    .filter(e => attState[e.id])
+    .map(e => {
+      const st = attState[e.id];
+      const isAbsent = st === 'absent';
+      const hm = isAbsent ? {h:0,ot:0} : HOURS[st];
+      return { employee_id:e.id, site_id:currentSite, date,
+        status: isAbsent ? 'absent' : 'present', hours: hm.h, ot_hours: hm.ot,
+        marked_by:me.id, updated_at:new Date().toISOString() };
+    });
+  if(rows.length === 0){ msg($("attMsg"), "请先给至少一位员工选择状态 · Please mark at least one"); return; }
   loading(true);
   try{
     const { error } = await sb.from("attendance").upsert(rows, { onConflict:"employee_id,date" });
     if(error) throw error;
-    msg($("attMsg"), `已提交 ${rows.length} 人(${date}),当天可修改。<br>Submitted ${rows.length} record(s). Editable anytime.`, true);
+    msg($("attMsg"), `已提交 ${rows.length} 人(${date}),随时可修改。<br>Submitted ${rows.length} record(s). Editable anytime.`, true);
   }catch(e){
     msg($("attMsg"), "提交失败 · Submit failed: "+e.message);
   }finally{ loading(false); }
@@ -417,7 +455,7 @@ async function submitAttendance(){
 function initHR(){
   hide($("managerView")); show($("hrView"));
   $("hdrTitle").textContent = "人事部 HR";
-  $("hdrSub").textContent = me.email || "";
+  $("hdrSub").textContent = me.name ? `${me.name} · ${me.email||''}` : (me.email || "");
 
   document.querySelectorAll(".tabs button").forEach(b=>{
     b.onclick = () => {
@@ -430,7 +468,7 @@ function initHR(){
 
   $("sumMonth").value = monthStr();
   $("loadSummary").onclick = loadSummary;
-  $("exportCsv").onclick = exportCsv;
+  $("exportXls").onclick = exportExcel;
   $("addEmp").onclick = addEmployee;
   $("addSite").onclick = addSite;
 
@@ -478,6 +516,7 @@ async function addEmployee(){
   const name = $("empName").value.trim();
   const nric = $("empNric").value.trim();
   const trade = $("empTrade").value;
+  const has_cidb = $("empCidb").checked;
   const site_id = $("empSite").value;
   if(!name){ msg($("empMsg"),"请输入员工姓名 · Enter name"); return; }
   if(!nric){ msg($("empMsg"),"请输入 NRIC / Passport · Enter NRIC/Passport"); return; }
@@ -485,9 +524,9 @@ async function addEmployee(){
   if(!site_id){ msg($("empMsg"),"请先在「工地与账号」里添加工地 · Add a site first"); return; }
   loading(true);
   try{
-    const { error } = await sb.from("employees").insert({ name, nric, trade, site_id });
+    const { error } = await sb.from("employees").insert({ name, nric, trade, has_cidb, site_id });
     if(error) throw error;
-    $("empName").value=""; $("empNric").value=""; $("empTrade").value="";
+    $("empName").value=""; $("empNric").value=""; $("empTrade").value=""; $("empCidb").checked=false;
     msg($("empMsg"),"已添加 · Added",true);
     await loadEmployeesManage();
   }catch(e){ msg($("empMsg"),"添加失败 · Failed: "+e.message); }
@@ -495,16 +534,17 @@ async function addEmployee(){
 }
 
 async function loadEmployeesManage(){
-  const { data } = await sb.from("employees").select("id,name,nric,trade,active,site_id").order("name");
+  const { data } = await sb.from("employees").select("id,name,nric,trade,has_cidb,active,site_id").order("name");
   const siteName = id => (siteCache.find(s=>s.id===id)||{}).name || "未分配 Unassigned";
   $("empManageList").innerHTML = (data && data.length) ? data.map(e=>`
     <div class="item">
       <div class="info">
         <b>${esc(e.name)}</b>
-        <small>${esc(e.trade||'-')} · ${esc(e.nric||'-')}</small>
+        <small>${esc(e.trade||'-')} · ${esc(e.nric||'-')} ${e.has_cidb?'<span class="badge cidb">CIDB ✓</span>':''}</small>
         <small>${esc(siteName(e.site_id))} ${e.active?'':'<span class="badge off">已停用 Inactive</span>'}</small>
       </div>
       <div class="row-actions">
+        <button class="btn secondary btn-sm" onclick="toggleCidb('${e.id}',${e.has_cidb})">CIDB ${e.has_cidb?'✓ 取消':'✗ 设为有'}</button>
         <button class="btn secondary btn-sm" onclick="toggleEmp('${e.id}',${e.active})">${e.active?'停用 Disable':'启用 Enable'}</button>
         <button class="btn secondary btn-sm" onclick="delEmp('${e.id}','${esc(e.name)}')">删除 Delete</button>
       </div>
@@ -517,6 +557,12 @@ window.toggleEmp = async (id, cur) => {
   finally{ loading(false); }
 };
 
+window.toggleCidb = async (id, cur) => {
+  loading(true);
+  try{ await sb.from("employees").update({ has_cidb: !cur }).eq("id", id); await loadEmployeesManage(); }
+  finally{ loading(false); }
+};
+
 window.delEmp = async (id, name) => {
   if(!confirm(`确定删除员工「${name}」?其考勤记录也会删除。\nDelete employee "${name}"? Their attendance will also be removed.`)) return;
   loading(true);
@@ -525,82 +571,145 @@ window.delEmp = async (id, name) => {
   finally{ loading(false); }
 };
 
-// ---- 负责人账号分配工地 Manager accounts ----
+// ---- 负责人账号 · 多工地分配 Manager accounts ----
 async function loadManagerAccounts(){
-  const { data } = await sb.from("profiles").select("id,email,role,site_id").eq("role","manager").order("email");
-  if(!data || data.length===0){ $("mgrAccountList").innerHTML = '<p class="muted">还没有负责人注册。让他们在 App 注册后刷新此页。<br>No managers yet. They register in the app, then refresh.</p>'; return; }
-  const opts = (sel) => '<option value="">未分配 Unassigned</option>' +
-    siteCache.map(s=>`<option value="${s.id}" ${s.id===sel?'selected':''}>${esc(s.name)}</option>`).join("");
-  $("mgrAccountList").innerHTML = data.map(p=>`
-    <div class="item">
-      <div class="info"><b>${esc(p.email||'(无邮箱 no email)')}</b></div>
-      <select style="width:auto; min-width:140px;" onchange="assignSite('${p.id}', this.value)">${opts(p.site_id)}</select>
-    </div>`).join("");
+  const { data:mgrs } = await sb.from("profiles").select("id,email,name,role").eq("role","manager").order("email");
+  const { data:links } = await sb.from("manager_sites").select("profile_id,site_id");
+  const linkSet = new Set((links||[]).map(l=>l.profile_id+"|"+l.site_id));
+  if(!mgrs || mgrs.length===0){ $("mgrAccountList").innerHTML = '<p class="muted">还没有负责人注册。让他们在 App 注册后刷新此页。<br>No managers yet. They register in the app, then refresh.</p>'; return; }
+  if(siteCache.length===0){ $("mgrAccountList").innerHTML = '<p class="muted">请先在上面添加工地,再来分配。<br>Add sites above first.</p>'; return; }
+
+  $("mgrAccountList").innerHTML = mgrs.map(p=>{
+    const title = (p.name ? esc(p.name)+' ' : '') + `<span class="muted">${esc(p.email||'(无邮箱 no email)')}</span>`;
+    const checks = siteCache.map(s=>{
+      const on = linkSet.has(p.id+"|"+s.id) ? "checked" : "";
+      return `<label><input type="checkbox" ${on} onchange="toggleSite('${p.id}','${s.id}',this.checked)"> ${esc(s.name)}</label>`;
+    }).join("");
+    return `<div class="item" style="flex-direction:column; align-items:stretch;">
+      <div class="info"><b>${title}</b></div>
+      <div class="sitechecks">${checks}</div>
+    </div>`;
+  }).join("");
 }
 
-window.assignSite = async (profileId, siteId) => {
+window.toggleSite = async (profileId, siteId, on) => {
   loading(true);
   try{
-    const { error } = await sb.from("profiles").update({ site_id: siteId || null }).eq("id", profileId);
-    if(error) throw error;
-    msg($("acctMsg"), "已保存分配 · Saved", true);
+    if(on){
+      const { error } = await sb.from("manager_sites").insert({ profile_id:profileId, site_id:siteId });
+      if(error) throw error;
+    } else {
+      const { error } = await sb.from("manager_sites").delete().eq("profile_id",profileId).eq("site_id",siteId);
+      if(error) throw error;
+    }
+    msg($("acctMsg"), "已保存 · Saved", true);
   }catch(e){ msg($("acctMsg"), "保存失败 · Save failed: "+e.message); }
   finally{ loading(false); }
 };
 
-// ---- 月度汇总 Monthly summary ----
-let lastSummary = [];
+// ============================================================
+// 月度汇总 + 月历导出 Monthly summary + calendar export
+// ============================================================
+let lastRows = [];   // 每位员工的汇总 + 每日工时
+let lastMonth = "";
+
+async function buildMonthData(m){
+  const [y, mo] = m.split("-").map(Number);
+  const daysInMonth = new Date(y, mo, 0).getDate();
+  const start = `${m}-01`;
+  const end   = `${m}-${String(daysInMonth).padStart(2,"0")}`;
+
+  const { data:emps } = await sb.from("employees").select("id,name,nric,trade,has_cidb,site_id");
+  const siteName = id => (siteCache.find(s=>s.id===id)||{}).name || "未分配 Unassigned";
+
+  const { data:rec, error } = await sb.from("attendance")
+    .select("employee_id,date,status,hours,ot_hours").gte("date", start).lte("date", end);
+  if(error) throw error;
+
+  // employee_id -> {day: hours}
+  const byEmp = {};
+  (rec||[]).forEach(r=>{
+    if(r.status !== 'present') return;
+    const h = (r.hours==null) ? 8 : r.hours;
+    const day = Number(r.date.slice(8,10));
+    (byEmp[r.employee_id] = byEmp[r.employee_id] || {})[day] = { h, ot:(r.ot_hours||0) };
+  });
+
+  const rows = (emps||[]).map(e=>{
+    const per = byEmp[e.id] || {};
+    let days=0, total=0, ot=0;
+    for(const d in per){ days++; total += per[d].h; ot += per[d].ot; }
+    return { name:e.name, nric:e.nric||"", trade:e.trade||"", cidb:e.has_cidb?"✓":"",
+      site:siteName(e.site_id), per, days, ot, normal:total-ot, total };
+  }).sort((a,b)=> a.site.localeCompare(b.site,'zh') || a.name.localeCompare(b.name,'zh'));
+
+  return { daysInMonth, rows };
+}
 
 async function loadSummary(){
-  const m = $("sumMonth").value; // YYYY-MM
+  const m = $("sumMonth").value;
   if(!m){ msg($("sumMsg"),"请选择月份 · Select a month"); return; }
-  const [y, mo] = m.split("-").map(Number);
-  const start = `${m}-01`;
-  const endD = new Date(y, mo, 0).getDate();
-  const end = `${m}-${String(endD).padStart(2,"0")}`;
-  loading(true);
-  msg($("sumMsg"),"");
+  loading(true); msg($("sumMsg"),"");
   try{
-    const { data:emps } = await sb.from("employees").select("id,name,nric,trade,site_id");
-    const siteName = id => (siteCache.find(s=>s.id===id)||{}).name || "未分配 Unassigned";
-
-    const { data:rec, error } = await sb.from("attendance")
-      .select("employee_id").eq("status","present").gte("date", start).lte("date", end);
-    if(error) throw error;
-    const cnt = {}; (rec||[]).forEach(r=>cnt[r.employee_id]=(cnt[r.employee_id]||0)+1);
-
-    lastSummary = (emps||[]).map(e=>({
-      name:e.name, nric:e.nric||"", trade:e.trade||"", site:siteName(e.site_id), days:cnt[e.id]||0
-    })).sort((a,b)=> a.site.localeCompare(b.site,'zh') || b.days-a.days || a.name.localeCompare(b.name,'zh'));
-
+    const { rows } = await buildMonthData(m);
+    lastRows = rows; lastMonth = m;
     const tb = $("sumTable").querySelector("tbody");
-    tb.innerHTML = lastSummary.length ? lastSummary.map(r=>`
-      <tr><td>${esc(r.name)}</td><td>${esc(r.nric||'-')}</td><td>${esc(r.trade||'-')}</td><td>${esc(r.site)}</td><td class="num">${r.days}</td></tr>`).join("")
-      : '<tr><td colspan="5" class="muted center">暂无数据 · No data</td></tr>';
-    if(lastSummary.length===0) msg($("sumMsg"),"该月还没有考勤数据 · No attendance this month");
+    tb.innerHTML = rows.length ? rows.map(r=>`
+      <tr><td>${esc(r.name)}</td><td>${esc(r.nric||'-')}</td><td>${esc(r.trade||'-')}</td><td class="num">${r.cidb||'-'}</td><td>${esc(r.site)}</td>
+      <td class="num">${r.days}</td><td class="num">${r.normal}</td><td class="num">${r.ot}</td><td class="num">${r.total}</td></tr>`).join("")
+      : '<tr><td colspan="9" class="muted center">暂无数据 · No data</td></tr>';
+    if(rows.length===0) msg($("sumMsg"),"该月还没有员工/考勤数据 · No data this month");
   }catch(e){ msg($("sumMsg"),"查询失败 · Query failed: "+e.message); }
   finally{ loading(false); }
 }
 
-function exportCsv(){
-  if(!lastSummary || lastSummary.length===0){ msg($("sumMsg"),"没有可导出的数据,请先查询 · No data, please Search first"); return; }
+// 导出成带格式的 Excel(用 HTML 表格,Excel 可直接打开)
+async function exportExcel(){
   const m = $("sumMonth").value;
-  const header = ["员工 Name","NRIC","工种 Trade","工地 Site","出勤天数 Days"];
-  const lines = [header.join(",")].concat(
-    lastSummary.map(r => [csvCell(r.name), csvCell(r.nric), csvCell(r.trade), csvCell(r.site), r.days].join(","))
-  );
-  const bom = "﻿"; // 让 Excel 正确识别 UTF-8 中文
-  const blob = new Blob([bom + lines.join("\r\n")], { type:"text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = `考勤汇总_Attendance_${m}.csv`;
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
+  if(!m){ msg($("sumMsg"),"请选择月份 · Select a month"); return; }
+  loading(true); msg($("sumMsg"),"");
+  try{
+    const { daysInMonth, rows } = await buildMonthData(m);
+    if(rows.length===0){ msg($("sumMsg"),"该月没有数据可导出 · No data to export"); loading(false); return; }
+
+    const dayCols = Array.from({length:daysInMonth}, (_,i)=>i+1);
+    const th = (t,extra='') => `<th style="border:1px solid #888;background:#1565c0;color:#fff;padding:6px 8px;font-size:12px;${extra}">${t}</th>`;
+    const td = (t,extra='') => `<td style="border:1px solid #bbb;padding:5px 8px;font-size:12px;${extra}">${t}</td>`;
+
+    let html = `<table style="border-collapse:collapse;font-family:Arial;">`;
+    // 表头
+    html += `<tr>${th('姓名 Name')}${th('NRIC')}${th('工种 Trade')}${th('CIDB')}${th('工地 Site')}`
+          + dayCols.map(d=>th(d,'text-align:center;')).join("")
+          + th('出勤天数 Days','text-align:center;')+th('正常 Normal','text-align:center;')+th('OT','text-align:center;')+th('总时数 Total','text-align:center;')+`</tr>`;
+    // 数据行
+    html += rows.map(r=>{
+      const cells = dayCols.map(d=>{
+        const v = r.per[d];
+        if(!v) return td('', 'text-align:center;color:#ccc;');
+        const bg = v.ot>0 ? 'background:#fff3e0;' : 'background:#e8f5e9;';
+        return td(v.h, 'text-align:center;'+bg);
+      }).join("");
+      return `<tr>${td(esc(r.name))}${td(esc(r.nric))}${td(esc(r.trade))}${td(r.cidb,'text-align:center;')}${td(esc(r.site))}`
+           + cells
+           + td(r.days,'text-align:center;font-weight:bold;')+td(r.normal,'text-align:center;')+td(r.ot,'text-align:center;color:#e65100;')+td(r.total,'text-align:center;font-weight:bold;')+`</tr>`;
+    }).join("");
+    html += `</table>`;
+    html += `<p style="font-family:Arial;font-size:11px;color:#666;">绿色=正常出勤,橙色=含OT。数字为当天总工时。 Green=normal, Orange=with OT. Number = total hours that day.</p>`;
+
+    const full = `<html><head><meta charset="utf-8"></head><body>${html}</body></html>`;
+    const blob = new Blob(["﻿"+full], { type:"application/vnd.ms-excel;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `考勤月历表_Attendance_${m}.xls`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+    msg($("sumMsg"),"已导出 · Exported",true);
+  }catch(e){ msg($("sumMsg"),"导出失败 · Export failed: "+e.message); }
+  finally{ loading(false); }
 }
-function csvCell(s){ s = String(s??""); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
 
 // ============================================================
-// 启动 startup:检查是否已登录 check existing session
+// 启动 startup
 // ============================================================
 (async function(){
   const { data:{ session } } = await sb.auth.getSession();
