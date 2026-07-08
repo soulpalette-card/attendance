@@ -174,7 +174,7 @@
         </div>
         <div id="sumMsg"></div>
         <div class="tbl-wrap" style="margin-top:12px;">
-          <table id="sumTable"><thead><tr><th>员工</th><th>工地</th><th class="num">出勤天数</th></tr></thead><tbody></tbody></table>
+          <table id="sumTable"><thead><tr><th>员工</th><th>NRIC</th><th>工种</th><th>工地</th><th class="num">出勤天数</th></tr></thead><tbody></tbody></table>
         </div>
       </div>
     </div>
@@ -185,6 +185,16 @@
         <h2>新增员工</h2>
         <label>员工姓名</label>
         <input id="empName" type="text" placeholder="张三">
+        <label>NRIC / Passport(身份证/护照号)</label>
+        <input id="empNric" type="text" placeholder="例如 S1234567A">
+        <label>工种 Trade</label>
+        <select id="empTrade">
+          <option value="">请选择工种</option>
+          <option value="carpenter">carpenter</option>
+          <option value="barbender">barbender</option>
+          <option value="ksk">ksk</option>
+          <option value="other">other</option>
+        </select>
         <label>分配工地</label>
         <select id="empSite"></select>
         <button class="btn" id="addEmp">添加员工</button>
@@ -467,26 +477,32 @@ window.delSite = async (id, name) => {
 // ---- 员工 ----
 async function addEmployee(){
   const name = $("empName").value.trim();
+  const nric = $("empNric").value.trim();
+  const trade = $("empTrade").value;
   const site_id = $("empSite").value;
   if(!name){ msg($("empMsg"),"请输入员工姓名"); return; }
+  if(!nric){ msg($("empMsg"),"请输入 NRIC / Passport"); return; }
+  if(!trade){ msg($("empMsg"),"请选择工种"); return; }
   if(!site_id){ msg($("empMsg"),"请先在「工地与账号」里添加工地"); return; }
   loading(true);
   try{
-    const { error } = await sb.from("employees").insert({ name, site_id });
+    const { error } = await sb.from("employees").insert({ name, nric, trade, site_id });
     if(error) throw error;
-    $("empName").value=""; msg($("empMsg"),"已添加",true);
+    $("empName").value=""; $("empNric").value=""; $("empTrade").value="";
+    msg($("empMsg"),"已添加",true);
     await loadEmployeesManage();
   }catch(e){ msg($("empMsg"),"添加失败:"+e.message); }
   finally{ loading(false); }
 }
 
 async function loadEmployeesManage(){
-  const { data } = await sb.from("employees").select("id,name,active,site_id").order("name");
+  const { data } = await sb.from("employees").select("id,name,nric,trade,active,site_id").order("name");
   const siteName = id => (siteCache.find(s=>s.id===id)||{}).name || "未分配";
   $("empManageList").innerHTML = (data && data.length) ? data.map(e=>`
     <div class="item">
       <div class="info">
         <b>${esc(e.name)}</b>
+        <small>${esc(e.trade||'-')} · ${esc(e.nric||'-')}</small>
         <small>${esc(siteName(e.site_id))} ${e.active?'':'<span class="badge off">已停用</span>'}</small>
       </div>
       <div class="row-actions">
@@ -547,7 +563,7 @@ async function loadSummary(){
   msg($("sumMsg"),"");
   try{
     // 员工 + 工地映射
-    const { data:emps } = await sb.from("employees").select("id,name,site_id");
+    const { data:emps } = await sb.from("employees").select("id,name,nric,trade,site_id");
     const empMap = {}; (emps||[]).forEach(e=>empMap[e.id]=e);
     const siteName = id => (siteCache.find(s=>s.id===id)||{}).name || "未分配";
 
@@ -559,13 +575,13 @@ async function loadSummary(){
 
     // 按员工汇总(所有员工都列出,包含 0 天)
     lastSummary = (emps||[]).map(e=>({
-      name:e.name, site:siteName(e.site_id), days:cnt[e.id]||0
+      name:e.name, nric:e.nric||"", trade:e.trade||"", site:siteName(e.site_id), days:cnt[e.id]||0
     })).sort((a,b)=> a.site.localeCompare(b.site,'zh') || b.days-a.days || a.name.localeCompare(b.name,'zh'));
 
     const tb = $("sumTable").querySelector("tbody");
     tb.innerHTML = lastSummary.length ? lastSummary.map(r=>`
-      <tr><td>${esc(r.name)}</td><td>${esc(r.site)}</td><td class="num">${r.days}</td></tr>`).join("")
-      : '<tr><td colspan="3" class="muted center">暂无数据</td></tr>';
+      <tr><td>${esc(r.name)}</td><td>${esc(r.nric||'-')}</td><td>${esc(r.trade||'-')}</td><td>${esc(r.site)}</td><td class="num">${r.days}</td></tr>`).join("")
+      : '<tr><td colspan="5" class="muted center">暂无数据</td></tr>';
     if(lastSummary.length===0) msg($("sumMsg"),"该月还没有考勤数据");
   }catch(e){ msg($("sumMsg"),"查询失败:"+e.message); }
   finally{ loading(false); }
@@ -574,9 +590,9 @@ async function loadSummary(){
 function exportCsv(){
   if(!lastSummary || lastSummary.length===0){ msg($("sumMsg"),"没有可导出的数据,请先查询"); return; }
   const m = $("sumMonth").value;
-  const header = ["员工","工地","出勤天数"];
+  const header = ["员工","NRIC","工种","工地","出勤天数"];
   const lines = [header.join(",")].concat(
-    lastSummary.map(r => [csvCell(r.name), csvCell(r.site), r.days].join(","))
+    lastSummary.map(r => [csvCell(r.name), csvCell(r.nric), csvCell(r.trade), csvCell(r.site), r.days].join(","))
   );
   const bom = "﻿"; // 让 Excel 正确识别 UTF-8 中文
   const blob = new Blob([bom + lines.join("\r\n")], { type:"text/csv;charset=utf-8;" });

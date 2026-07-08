@@ -23,10 +23,16 @@ create table if not exists public.sites (
 create table if not exists public.employees (
   id         uuid primary key default gen_random_uuid(),
   name       text not null,
+  nric       text,               -- 身份证/护照号 NRIC / Passport
+  trade      text,               -- 工种:carpenter / barbender / ksk / other
   site_id    uuid references public.sites(id) on delete set null,
   active     boolean not null default true,
   created_at timestamptz not null default now()
 );
+
+-- 若表已存在,补上新列(重复运行安全)
+alter table public.employees add column if not exists nric  text;
+alter table public.employees add column if not exists trade text;
 
 -- 用户资料(角色 + 所属工地)。id 与 Supabase 登录用户一一对应。
 create table if not exists public.profiles (
